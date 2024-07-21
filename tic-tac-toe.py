@@ -1,112 +1,95 @@
-# Spiel Tic-Tac-Toe
+spiel_active = True
+current_player = "X"
 
-spiel_aktiv = True
-spieler_aktuell = 'X'
+game_board = [" ",
+             "1", "2", "3",
+             "4", "5", "6",
+             "7", "8", "9"
+            ]
 
-# Spielfeld als Liste erstellen
-spielfeld = [" ",
-             "1","2","3",
-             "4","5","6",
-             "7","8","9"]
-
-# Spielfeld ausgeben
-def spielfeld_ausgeben():
-    print (spielfeld[1] + "|" + spielfeld[2] + "|" + spielfeld[3] )
-    print (spielfeld[4] + "|" + spielfeld[5] + "|" + spielfeld[6] )
-    print (spielfeld[7] + "|" + spielfeld[8] + "|" + spielfeld[9] )
+def print_board():
+    """Prints the current state of the game board."""
+    print(game_board[1] + "|" + game_board[2] + "|" + game_board[3])
+    print(game_board[4] + "|" + game_board[5] + "|" + game_board[6])
+    print(game_board[7] + "|" + game_board[8] + "|" + game_board[9])
 
 
-# Spieleingabe und Kontrolle der Eingabe
-def spieler_eingabe():
-    global spiel_aktiv
+def player_input():
+    """Handles player input for making a move."""
+    global spiel_active
     while True:
-        spielzug = input("Bitte Feld eingeben: ")
-        # Vorzeitiges Spielende durch Spieler
-        if spielzug == 'q':
-            spiel_aktiv = False
+        move = input("Please enter a position: ")
+
+        if move == "q":
+            spiel_active = False
             return
+
         try:
-            spielzug = int(spielzug)
+            move = int(move)
         except ValueError:
-            print("Bitte Zahl von 1 bis 9 eingeben")
+            print("Please enter a number from 1 to 9.")
         else:
-            if spielzug >= 1 and spielzug <= 9:
-                # Spielereingabe und Kontrolle der Eingabe
-                if spielfeld[spielzug] == 'X' or spielfeld[spielzug] == 'O':
-                    print("Das Feld ist bereits belegt - ein anderes wählen!")
+            if 1 <= move <= 9:
+                if game_board[move] == "X" or game_board[move] == "O":
+                    print("That position is already taken. Choose another!")
                 else:
-                    return spielzug
+                    return move
             else:
-                print("Zahl muss zwischen 1 und 9 liegen")
+                print("Number must be between 1 and 9!")
 
 
-def spieler_wechseln():
-    global spieler_aktuell
-    if spieler_aktuell == 'X':
-        spieler_aktuell = 'O'
+def switch_player():
+    """Switches the current player between 'X' and 'O'."""
+    global current_player
+    if current_player == "X":
+        current_player = "O"
     else:
-        spieler_aktuell = 'X'
+        current_player = "X"
 
 
-# Kontrolle, ob ein Spieler gewonnen hat.
-def kontrolle_gewonnen():
-    # Wenn alle 3 Felder gleich sind, hat der entsprechende Spieler gewonnen.
-    # Kontrolle auf Reihen
-    if spielfeld[1] == spielfeld[2] == spielfeld[3]:
-        return spielfeld[1]
-    if spielfeld[4] == spielfeld[5] == spielfeld[6]:
-        return spielfeld[4]
-    if spielfeld[7] == spielfeld[8] == spielfeld[9]:
-        return spielfeld[7]
-    # Kontrolle auf Spalten
-    if spielfeld[1] == spielfeld[4] == spielfeld[7]:
-        return spielfeld[1]
-    if spielfeld[2] == spielfeld[5] == spielfeld[8]:
-        return spielfeld[2]
-    if spielfeld[3] == spielfeld[6] == spielfeld[9]:
-        return spielfeld[3]
-    # Kontrolle auf Diagonalen
-    if spielfeld[1] == spielfeld[5] == spielfeld[9]:
-        return spielfeld[5]
-    if spielfeld[7] == spielfeld[5] == spielfeld[3]:
-        return spielfeld[5]
+def check_win():
+    """Checks if any player has won the game."""
+    if game_board[1] == game_board[2] == game_board[3]:
+        return game_board[1]
+    if game_board[4] == game_board[5] == game_board[6]:
+        return game_board[4]
+    if game_board[7] == game_board[8] == game_board[9]:
+        return game_board[7]
+
+    if game_board[1] == game_board[4] == game_board[7]:
+        return game_board[1]
+    if game_board[2] == game_board[5] == game_board[8]:
+        return game_board[2]
+    if game_board[3] == game_board[6] == game_board[9]:
+        return game_board[3]
+
+    if game_board[1] == game_board[5] == game_board[9]:
+        return game_board[5]
+    if game_board[7] == game_board[5] == game_board[3]:
+        return game_board[5]
 
 
-def kontrolle_auf_unentschieden():
-    if (spielfeld[1] == 'X' or spielfeld[1] == 'O') \
-      and (spielfeld[2] == 'X' or spielfeld[2] == 'O') \
-      and (spielfeld[3] == 'X' or spielfeld[3] == 'O') \
-      and (spielfeld[4] == 'X' or spielfeld[4] == 'O') \
-      and (spielfeld[5] == 'X' or spielfeld[5] == 'O') \
-      and (spielfeld[6] == 'X' or spielfeld[6] == 'O') \
-      and (spielfeld[7] == 'X' or spielfeld[7] == 'O') \
-      and (spielfeld[8] == 'X' or spielfeld[8] == 'O') \
-      and (spielfeld[9] == 'X' or spielfeld[9] == 'O'):
-        return ('unentschieden')
+def check_draw():
+    """Checks if the game ended in a draw."""
+    if all(cell == "X" or cell == "O" for cell in game_board[1:]):
+        return "draw"
 
 
-# Aktuelles Spielfeld ausgeben
-spielfeld_ausgeben()
+print_board()
 
-while spiel_aktiv:
-    # Eingabe des aktiven Spielers
+while spiel_active:
     print()
-    print ("Spieler " + spieler_aktuell + " am Zug")
-    spielzug = spieler_eingabe()
-    if spielzug:
-        spielfeld[spielzug] = spieler_aktuell
-        # Aktuelles Spielfeld ausgeben
-        spielfeld_ausgeben()
-        # Kontrolle, ob jemand gewonnen hat
-        gewonnen = kontrolle_gewonnen()
-        if gewonnen:
-            print ("Spieler " + gewonnen + " hat gewonnen!")
-            spiel_aktiv = False
+    print("Player " + current_player + "'s turn")
+    move = player_input()
+    if move:
+        game_board[move] = current_player
+        print_board()
+        winner = check_win()
+        if winner:
+            print("Player " + winner + " wins!")
             break
-        # Kontrolle, ob unentschieden
-        unentschieden = kontrolle_auf_unentschieden()
-        if unentschieden:
-            print ("Spiel ist unentschieden ausgegangen")
-            spiel_aktiv = False
-        # Spieler wechseln
-        spieler_wechseln()
+        draw = check_draw()
+        if draw:
+            print("The game ends in a draw.")
+            break
+        switch_player()
